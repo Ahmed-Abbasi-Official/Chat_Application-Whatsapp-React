@@ -78,7 +78,7 @@ const App = () => {
             <>
               <Lists />
               {channelStatus ? <Chat />:null}
-              {/* {channelStatus ? <Details />:null} */}
+              {channelStatus ? <Details />:null}
             </>
           ) : (
             <Login />

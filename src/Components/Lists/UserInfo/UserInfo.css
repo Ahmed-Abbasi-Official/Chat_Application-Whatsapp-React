@@ -1,37 +1,87 @@
-.userInfo{
-    padding:20px 10px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    .user{
-        display:flex;
-        align-items:center;
-        gap:20px;
+.userInfo {
+    padding: 20px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      
+      h2 {
+        font-size: 20px;
+      }
+    }
+    
+    .userImg {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+    
+    .icons {
+      display: flex;
+      gap: 20px;
+      
+      img {
+        width: 17px;
+        height: 17px;
+        object-fit: cover;
+        border-radius: 0%;
+        cursor: pointer;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      
+      .user {
+        gap: 10px;
         
-        h2{
-            font-size:20px;
+        h2 {
+          font-size: 18px;
         }
+      }
+      
+      .userImg {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .icons {
+        gap: 10px;
         
+        img {
+          width: 15px;
+          height: 15px;
+        }
+      }
     }
-    .userImg{
-        width:50px;
-        height:50px;
-        border-radius:50%;
+    
+    @media (max-width: 480px) {
+      .user {
+        gap: 5px;
+        
+        h2 {
+          font-size: 16px;
+        }
+      }
+      
+      .userImg {
+        width: 30px;
+        height: 30px;
+      }
+      
+      .icons {
+        gap: 5px;
+        
+        img {
+          width: 13px;
+          height: 13px;
+        }
+      }
     }
+  }
   
-
-    .icons{
-        display:flex;
-        gap:20px;
-        
-
-        img{
-            width:17px;
-            height:17px;
-            object-fit:cover;
-            border-radius:0%;
-            cursor:pointer;
-        }
-    }
-}

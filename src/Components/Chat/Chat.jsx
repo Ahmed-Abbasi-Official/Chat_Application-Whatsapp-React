@@ -1,7 +1,8 @@
 import "./Chat.css";
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getLastMessage } from "../../Store/AuthSlice";
 import {
   addDoc,
   arrayUnion,
@@ -29,7 +30,8 @@ const Chat = () => {
   const groupStatus = useSelector((state) => state.authReducers.groupStatus);
   const channel = useSelector((state) => state.authReducers.channel);
   const groupChannel = useSelector((state) => state.authReducers.groupChannel);
-  console.log(groupChannel);
+  const dispatch=useDispatch()
+  // console.log(groupChannel);
   const handleEmoji = (e) => {
     setValue((prev) => prev + e.emoji);
   };
@@ -69,20 +71,32 @@ const Chat = () => {
       where("chatId", "==", chatId()),
       orderBy("timeStamp", "asc")
     );
+  
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allMessages = [];
       querySnapshot.forEach((doc) => {
         allMessages.push({
           ...doc.data(),
           messageID: doc.id,
-          direction:
-            doc.data().sender === userData.userID ? "outgoing" : "incoming",
+          direction: doc.data().sender === userData.userID ? "outgoing" : "incoming",
         });
       });
-      // console.log("Current cities in CA: ",allMessages );
+  
       setMessage(allMessages);
+  
+      if (allMessages.length > 0) {
+        const lastMessage = allMessages[allMessages.length - 1];
+        console.log(lastMessage);
+        dispatch(getLastMessage(lastMessage));
+      }
     });
   };
+  
+  
+ 
+
+
+  
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
@@ -169,6 +183,7 @@ const Chat = () => {
       console.error("Error getting group messages:", error);
     }
   };
+  
   // console.log(groupStatus);
   return (
     <>

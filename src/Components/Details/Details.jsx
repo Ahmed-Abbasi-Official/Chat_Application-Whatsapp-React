@@ -7,6 +7,11 @@ import { logout } from '../../Store/AuthSlice'
 const Details = () => {
   const channel = useSelector((state) => state.authReducers.channel);
   const dispatch=useDispatch()
+  const groupChannel = useSelector((state) => state.authReducers.groupChannel);
+  const groupStatus = useSelector((state) => state.authReducers.groupStatus);
+  console.log(groupChannel);
+  console.log(groupStatus);
+  
   const deleteAcc=async()=>{
     const userData=await appwriteAuth.logout()
     if (userData) {
@@ -17,8 +22,17 @@ const Details = () => {
     <>
     <div className='detail'>
       <div className="user">
-        <img src={channel.url} alt="" />
-        <h2>{channel.username}</h2>
+       {groupStatus ? (
+        <>
+         <img src={groupChannel?.groupDp} alt="" />
+         <h2>{groupChannel?.groupName}</h2>
+        </>
+       ):(
+        <>
+         <img src={channel?.url} alt="" />
+         <h2>{channel?.username}</h2>
+        </>
+       )}
         {/* <p>Lorem ipsum dolor sit amet.</p> */}
       </div>
       <div className="info">
@@ -34,36 +48,7 @@ const Details = () => {
             <img src="./arrowUp.png" alt="" />
           </div>
         </div>
-        <div className="option">
-          <div className="title">
-            <span>Shared photos</span>
-            <img src="./arrowDown.png" alt="" />
-          </div>
-          <div className="photos">
-            <div className="photoItem">
-             <div className="photoDetails">
-             <img src="https://images.pexels.com/photos/609549/pexels-photo-609549.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" />
-             <span>photo_2024_2.png</span>
-             </div>
-            <img src="./download.png" alt=""  className='icon'/>
-            </div>
-            
-            <div className="photoItem">
-             <div className="photoDetails">
-             <img src="https://images.pexels.com/photos/609549/pexels-photo-609549.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" />
-             <span>photo_2024_2.png</span>
-             </div>
-            <img src="./download.png" alt=""  className='icon'/>
-            </div>
-          </div>
-        </div>
-        <div className="option">
-          <div className="title">
-            <span>Shared Files</span>
-            <img src="./arrowUp.png" alt="" />
-          </div>
-        </div>
-        <button>Block user</button>
+    
         <button className='logout' onClick={deleteAcc}>Logout</button>
       </div>
     </div>

@@ -6,7 +6,8 @@ const initialState = {
   channel:null,
   channelStatus:false,
   groupStatus:false,
-  groupChannel:null
+  groupChannel:null,
+  lastMessage:null
   
 };
 
@@ -33,10 +34,13 @@ const AuthSlice = createSlice({
     },
     handleGroupChannle:(state,action)=>{
       state.groupChannel=action.payload
+    },
+    getLastMessage:(state,action)=>{
+      state.lastMessage=action.payload
     }
   },
 });
 
-export const { login, logout,getChannel,groupStatus,chatShow,handleGroupChannle } = AuthSlice.actions;
+export const { login, logout,getChannel,groupStatus,chatShow,handleGroupChannle,getLastMessage} = AuthSlice.actions;
 
 export default AuthSlice.reducer;

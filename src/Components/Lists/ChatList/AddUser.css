@@ -1,58 +1,123 @@
-.addUser{
-    max-width:max-content;
-    max-height:max-content;
-    padding:30px;
-    background-color:rgba(17,25,40,0.796);
-    border-radius:10px;
-    position:absolute;
-    top:200px;
-    left:200px;
-    bottom:0;
-    right:0;
-
-    form{
-        display:flex;
-        gap:20px;
-
-
-        input{
-            padding:10px;
-            border-radius:10px;
-            border:none;
-            outline:none;
-
-        }
-
-        button{
-            padding:10px;
-            border-radius:10px;
-            background-color:#1a73e8;
-            color:white;
-            border:none;
-            cursor:pointer;
-        }
+.addUser {
+    max-width: max-content;
+    max-height: max-content;
+    padding: 30px;
+    background-color: rgba(17, 25, 40, 0.796);
+    border-radius: 10px;
+    position: absolute;
+    top: 200px;
+    left: 200px;
+    bottom: 0;
+    right: 0;
+  
+    form {
+      display: flex;
+      gap: 20px;
+  
+      input {
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+      }
+  
+      button {
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
     }
-
-    .user{
-        margin-top:30px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-
-        .details{
-            display:flex;
-            justify-content:center;
-            gap:20px;
-            align-items:center;
-        }
-        button{
-            padding:8px;
-            border-radius:10px;
-            background-color:#1a73e8;
-            color:white;
-            border:none;
-            cursor:pointer;
-        }
-        
+  
+    .user {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+  
+      .details {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        align-items: center;
+      }
+      button {
+        padding: 8px;
+        border-radius: 10px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
     }
-}
+  
+    @media (max-width: 768px) {
+      top: 100px;
+      left: 50px;
+      right: 50px;
+      padding: 20px;
+  
+      form {
+        flex-direction: column;
+        gap: 10px;
+  
+        input {
+          padding: 8px;
+        }
+  
+        button {
+          padding: 8px;
+        }
+      }
+  
+      .user {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+  
+        .details {
+          flex-direction: column;
+          gap: 10px;
+        }
+  
+        button {
+          padding: 8px;
+        }
+      }
+    }
+  
+    @media (max-width: 480px) {
+      top: 50px;
+      left: 20px;
+      right: 20px;
+      padding: 15px;
+  
+      form {
+        gap: 5px;
+  
+        input {
+          padding: 5px;
+        }
+  
+        button {
+          padding: 5px;
+        }
+      }
+  
+      .user {
+        margin-top: 20px;
+        gap: 5px;
+  
+        .details {
+          gap: 5px;
+        }
+  
+        button {
+          padding: 5px;
+        }
+      }
+    }
+  }
+  

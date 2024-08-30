@@ -39,6 +39,9 @@ const ChatList = () => {
   let [params, setParams] = useSearchParams();
   const dispatch = useDispatch();
   const channel = useSelector((state) => state.authReducers.channel);
+  const lastMessage = useSelector((state) => state.authReducers.lastMessage);
+  // console.log(lastMessage);
+  
 
   // const chatId = searchParams.get('chatId');
 
@@ -214,6 +217,7 @@ const ChatList = () => {
     console.log(session);
     setCreateGroup(false);
   };
+  
 
   const handleGroupChannel = (group) => {
     dispatch(groupStatus(true));
@@ -240,6 +244,7 @@ const ChatList = () => {
     setCreateGroup(false);
     console.log(avatar);
   };
+  
 
   return (
     <>
@@ -345,7 +350,7 @@ const ChatList = () => {
                   <div className="userName">
                     <span>{user?.username || "Unknown User"}</span>{" "}
                   </div>
-                  <p>{user?.lastMessgae}</p>
+                  <p>{lastMessage?.message}</p>
                 </div>
                 <button className="text-center text-sm text-red-400">
                   <i
