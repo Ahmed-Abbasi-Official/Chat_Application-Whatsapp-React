@@ -12,16 +12,13 @@ import {
   getDocs,
   onSnapshot,
   query,
-  serverTimestamp,
-  setDoc,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
+import appwriteAuth from "../../../Appwrite/Auth";
 import { db } from "../../../Conf/Firebase";
 import { arrayUnion } from "firebase/firestore";
 import { useSearchParams } from "react-router-dom";
-import ReactSearchBox from "react-search-box";
 import upload from "../../../Conf/Upload";
 import { groupStatus, handleGroupChannle } from "../../../Store/AuthSlice";
 const ChatList = () => {
@@ -35,7 +32,6 @@ const ChatList = () => {
   const [groupValue, setGroupValue] = useState("");
   const [groupUsers, setGroupUsers] = useState(null);
   const [avatar, setAvatar] = useState("");
-  const [existUser, setExistUser] = useState(null);
   let [params, setParams] = useSearchParams();
   const dispatch = useDispatch();
   const channel = useSelector((state) => state.authReducers.channel);

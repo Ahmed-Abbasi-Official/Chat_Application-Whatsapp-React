@@ -343,7 +343,7 @@ const Chat = () => {
             <div className="icons">
               {/* <img src="./phone.png" alt="" />
           <img src="./video.png" alt="" /> */}
-              <img src="./info.png" alt="" />
+              {/* <img src="./info.png" alt="" /> */}
             </div>
           </div>
           <div className="center">

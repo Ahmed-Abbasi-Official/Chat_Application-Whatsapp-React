@@ -148,29 +148,28 @@ const Login = () => {
 
   return (
     <>
-      <div className="z-10 fixed top-[20%] left-[20%]">
-        {loader ? (
+      {loader && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <ColorRing
             visible={true}
-            height="400"
-            width="400"
-            ariaLabel="color-ring-loading"
-            wrapperStyle={{}}
-            wrapperClass="color-ring-wrapper"
-            colors={['#1f8ef1', '#1f8ef1', '#fff', '#1f8ef1', '#fff']}
+            height={80}
+            width={80}
+            ariaLabel="loading-indicator"
+            colors={['#1f8ef1', '#1f8ef1', '#ffffff', '#1f8ef1', '#ffffff']}
           />
-        ) : null}
-      </div>
-      <div className="login px-5">
-        <div className="item">
-          <h2>Welcome back,</h2>
-          <form onSubmit={handleLogin}>
+        </div>
+      )}
+      <div className="flex flex-col md:flex-row items-center md:justify-center min-h-screen p-5">
+        <div className="item w-full md:w-1/2 mb-2 md:mb-0">
+          <h2 className="text-center font-bold text-xl mb-1 md:mb-5">Welcome back,</h2>
+          <form onSubmit={handleLogin} className="flex flex-col items-center">
             <input
               type="text"
               placeholder="Enter Your email"
               name="email"
               value={value.email}
               onChange={handleChange}
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
             />
             <input
               type="password"
@@ -178,21 +177,31 @@ const Login = () => {
               name="password"
               value={value.password}
               onChange={handleChange}
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
             />
-            <button type="submit" onClick={loginAccount} disabled={loader}>
+            <button
+              type="submit"
+              onClick={loginAccount}
+              disabled={loader}
+              className="w-full py-3 bg-blue-500 text-white rounded-md"
+            >
               Sign In
             </button>
           </form>
         </div>
-        <div className="separator"></div>
-        <div className="item">
-          <h2>Create an Account</h2>
-          <form onSubmit={handleLogin}>
-            <label htmlFor="file">
+        <div className="separator md:mx-10"></div>
+        <div className="item w-full md:w-1/2">
+          <h2 className="text-center md:text-lg text-sm md:mb-5 mb-2">Create an Account</h2>
+          <form onSubmit={handleLogin} className="flex flex-col items-center">
+            <label htmlFor="file" className="cursor-pointer flex justify-center flex-col items-center">
               {avatar && (
-                <img src={avatar.Url || "./avatar.png"} alt="Avatar Preview" />
+                <img
+                  src={avatar.Url || "./avatar.png"}
+                  alt="Avatar Preview"
+                  className="md:mb-5 mb-3 w-16 h-16 md:w-24 md:h-24 rounded-full object-cover text-center"
+                />
               )}
-              Upload an Image
+              <span className="text-blue-500 md:text-lg text-sm">Upload an Image</span>
             </label>
             <input
               type="file"
@@ -207,6 +216,7 @@ const Login = () => {
               placeholder="Enter Your name"
               value={value.name}
               onChange={handleChange}
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
             />
             <input
               type="text"
@@ -214,6 +224,7 @@ const Login = () => {
               name="email"
               value={value.email}
               onChange={handleChange}
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
             />
             <input
               type="password"
@@ -221,8 +232,14 @@ const Login = () => {
               name="password"
               value={value.password}
               onChange={handleChange}
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2  border rounded-md"
             />
-            <button onClick={newAccount} type="submit" disabled={loader}>
+            <button
+              onClick={newAccount}
+              type="submit"
+              disabled={loader}
+              className="w-full py-3 bg-green-500 text-white rounded-md"
+            >
               Sign Up
             </button>
           </form>

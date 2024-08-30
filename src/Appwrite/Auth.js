@@ -5,17 +5,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { auth } from "../Conf/Firebase";
 
 export class AppwriteAuth {
-  // client = new Client();
-  // account;
+ 
   
-
-  // constructor() {
-  //   this.client
-  //   .setEndpoint(Conf.appwriteUrl)
-  //   .setProject(Conf.appprojectid);
-  //   this.account = new Account(this.client);
-  
-  // }
 
   
 

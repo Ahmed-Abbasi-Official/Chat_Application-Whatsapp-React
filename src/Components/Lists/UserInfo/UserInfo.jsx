@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UserInfo.css";
 import { useSelector } from "react-redux";
-
+import appwriteAuth from "../../../Appwrite/Auth";
 const UserInfo = () => {
 
   const userData = useSelector((state) => state.authReducers.userData);
@@ -13,9 +13,7 @@ const UserInfo = () => {
         <h2>{userData.username}</h2>
       </div>
       <div className="icons">
-        {/* <img src="./more.png" alt="" />
-        <img src="./video.png" alt="" /> */}
-        <img src="./edit.png" alt="" />
+        <button className="btn">Logout</button>
       </div>
     </div>
   );

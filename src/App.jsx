@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Chat from "./Components/Chat/Chat";
-import Details from "./Components/Details/Details";
 import Lists from "./Components/Lists/Lists";
 import Login from "./Components/Login/Login";
 import Notification from "./Components/Notification/Notification";
@@ -78,7 +77,6 @@ const App = () => {
             <>
               <Lists />
               {channelStatus ? <Chat />:null}
-              {channelStatus ? <Details />:null}
             </>
           ) : (
             <Login />
