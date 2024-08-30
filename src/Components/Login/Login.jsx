@@ -191,7 +191,7 @@ const Login = () => {
         </div>
         <div className="separator md:mx-10"></div>
         <div className="item w-full md:w-1/2">
-          <h2 className="text-center md:text-lg text-sm md:mb-5 mb-2">Create an Account</h2>
+          <h2 className="text-center  text-sm md:mb-5 mb-2">Create an Account</h2>
           <form onSubmit={handleLogin} className="flex flex-col items-center">
             <label htmlFor="file" className="cursor-pointer flex justify-center flex-col items-center">
               {avatar && (
