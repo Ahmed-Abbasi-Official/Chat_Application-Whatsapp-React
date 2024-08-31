@@ -355,7 +355,18 @@ const ChatList = ({toggleLists}) => {
                   <div className="userName">
                     <span>{user?.username || "Unknown User"}</span>{" "}
                   </div>
-                  <p>{lastMessage?.message}</p>
+                  <p>
+  {lastMessage?.message.match(/https?/i) ? (
+    lastMessage?.message.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i) ? (
+      <p>There is an Image</p>
+    ) : (
+      <p>There is a link</p>
+    )
+  ) : (
+    <p>{lastMessage?.message}</p>
+  )}
+</p>
+
                 </div>
                 <button className="text-center text-sm text-red-400">
                   <i
