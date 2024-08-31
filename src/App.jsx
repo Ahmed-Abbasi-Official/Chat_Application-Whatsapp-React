@@ -64,6 +64,11 @@ const App = () => {
     dispatch(getMobile(showLists))
   };
 
+
+  
+
+  
+
   return (
     <>
       {loading ? (
@@ -82,7 +87,7 @@ const App = () => {
              
                 {showLists && <Lists toggleLists={toggleLists} />}
               </div>
-              <div className="hidden md:block w-full">
+              <div className="hidden md:block ">
                 <Lists />
               </div>
               {channelStatus ? <Chat toggleLists={toggleLists} /> : null}
@@ -90,7 +95,6 @@ const App = () => {
           ) : (
             <Login />
           )}
-          <Notification />
         </div>
       )}
     </>

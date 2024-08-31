@@ -20,7 +20,7 @@ import {
 import { db } from "../../Conf/Firebase";
 import upload from "../../Conf/Upload";
 
-const Chat = (toggleLists) => {
+const Chat = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [groupValue, setGroupValue] = useState("");
@@ -30,7 +30,7 @@ const Chat = (toggleLists) => {
   const groupStatus = useSelector((state) => state.authReducers.groupStatus);
   const channel = useSelector((state) => state.authReducers.channel);
   const groupChannel = useSelector((state) => state.authReducers.groupChannel);
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   // console.log(groupChannel);
   const handleEmoji = (e) => {
     setValue((prev) => prev + e.emoji);
@@ -71,19 +71,20 @@ const Chat = (toggleLists) => {
       where("chatId", "==", chatId()),
       orderBy("timeStamp", "asc")
     );
-  
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allMessages = [];
       querySnapshot.forEach((doc) => {
         allMessages.push({
           ...doc.data(),
           messageID: doc.id,
-          direction: doc.data().sender === userData.userID ? "outgoing" : "incoming",
+          direction:
+            doc.data().sender === userData.userID ? "outgoing" : "incoming",
         });
       });
-  
+
       setMessage(allMessages);
-  
+
       if (allMessages.length > 0) {
         const lastMessage = allMessages[allMessages.length - 1];
         console.log(lastMessage);
@@ -91,12 +92,6 @@ const Chat = (toggleLists) => {
       }
     });
   };
-  
-  
- 
-
-
-  
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
@@ -107,10 +102,12 @@ const Chat = (toggleLists) => {
   const formatTimeGroup = (timestamp) => {
     if (!timestamp) return "";
     const date = new Date(timestamp); // Convert milliseconds to JavaScript Date object
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }); // Format the time as hh:mm:ss
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    }); // Format the time as hh:mm:ss
   };
-  
-  
 
   const handleDeleteMessage = (id) => {
     message &&
@@ -123,7 +120,11 @@ const Chat = (toggleLists) => {
     const file = e.target.files[0];
     const session = await upload(file);
     if (session) {
-      return setValue(session);
+      if (groupStatus) {
+        return setGroupValue(session);
+      } else {
+        return setValue(session);
+      }
     }
   };
 
@@ -131,14 +132,16 @@ const Chat = (toggleLists) => {
     try {
       const q = query(
         collection(db, "GroupsChats"),
-        where("groupName", "==", "Ahmed Group")
+        where("groupId", "==", userData.userID)
       );
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
         const groupChatDoc = querySnapshot.docs[0];
-        // console.log(groupChatDoc);
-        const groupChatDocRef = doc(db, "GroupsChats", groupChatDoc.id);
+        console.log(groupChatDoc.data());
+
+        const groupChatDocRef = doc(db, "GroupsChats", groupChatDoc.id); // Extracting the document ID
+        console.log(groupChatDocRef);
 
         // Assuming newMessage is the new message you want to add to the chats array
         await updateDoc(groupChatDocRef, {
@@ -147,7 +150,7 @@ const Chat = (toggleLists) => {
             senderId: userData.userID,
             senderName: userData.username,
             senderImg: userData.url,
-            time:Date.now()
+            time: Date.now(),
           }),
         });
 
@@ -164,7 +167,7 @@ const Chat = (toggleLists) => {
     try {
       const q = query(
         collection(db, "GroupsChats"),
-        where("groupName", "==", "Ahmed Group")
+        where("groupId", "==", "pnK5caMhduP5d2Cdp5ri7tg36GE3")
       );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         if (!querySnapshot.empty) {
@@ -175,6 +178,8 @@ const Chat = (toggleLists) => {
               val.senderId === userData.userID ? "outgoing" : "incoming",
             groupMessagesId: querySnapshot.docs[0].id,
           }));
+          console.log(newArray[0].messages);
+
           setGroupMessages(newArray);
         }
       });
@@ -183,7 +188,8 @@ const Chat = (toggleLists) => {
       console.error("Error getting group messages:", error);
     }
   };
-  
+  console.log(groupMessages);
+
   // console.log(groupStatus);
   return (
     <>
@@ -209,7 +215,7 @@ const Chat = (toggleLists) => {
                 groupMessages.map((val) => (
                   <>
                     <div
-                      className={` ${
+                      className={`${
                         val.direction === "outgoing"
                           ? "message own "
                           : "message "
@@ -217,14 +223,6 @@ const Chat = (toggleLists) => {
                       key={val?.groupId}
                     >
                       <div className="texts">
-                        {/* {val?.message.match(
-                          /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
-                          ) ? (
-                            <img src={val?.message} alt="" />
-                            ) : (
-                              <p>{val?.message}</p>
-                              )} */}
-
                         <p className="flex flex-col">
                           <div className="flex items-center gap-3 mb-3">
                             <span className="avatar-container">
@@ -239,10 +237,21 @@ const Chat = (toggleLists) => {
                             </span>{" "}
                             {/* Added margin-left for spacing */}
                           </div>
-                          <span >{val?.messages}</span>
+
+                          
+                          {val?.messages.match(
+                          /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
+                        ) ? (
+                          <img src={val?.messages} alt="" />
+                        ) : (
+                          <p>{val?.messages}</p>
+                        )}
+                          
                         </p>
 
-                        <span className="timeText">{formatTimeGroup(val.time)}</span>
+                        <span className="timeText">
+                          {formatTimeGroup(val.time)}
+                        </span>
                       </div>
                       {/* <button className="text-center text-sm text-red-400">
                         <i
@@ -259,7 +268,7 @@ const Chat = (toggleLists) => {
                 message.map((val) => (
                   <>
                     <div
-                      className={` ${
+                      className={`${
                         val.direction === "outgoing" ? "message own" : "message"
                       }`}
                       key={val.messageID}
@@ -273,7 +282,9 @@ const Chat = (toggleLists) => {
                           <p>{val?.message}</p>
                         )}
 
-                        <span className="timeText">{formatTime(val.timeStamp)}</span>
+                        <span className="timeText">
+                          {formatTime(val.timeStamp)}
+                        </span>
                       </div>
                       <button className="text-center text-sm text-red-400">
                         <i
@@ -340,18 +351,13 @@ const Chat = (toggleLists) => {
                 {/* <p>Lorem ipsum dolor sit amet.</p> */}
               </div>
             </div>
-            <div className="icons">
-              {/* <img src="./phone.png" alt="" />
-          <img src="./video.png" alt="" /> */}
-              {/* <img src="./info.png" alt="" /> */}
-            </div>
           </div>
           <div className="center">
             {message &&
               message.map((val) => (
                 <>
                   <div
-                    className={` ${
+                    className={`${
                       val.direction === "outgoing" ? "message own" : "message"
                     }`}
                     key={val.messageID}
@@ -365,7 +371,9 @@ const Chat = (toggleLists) => {
                         <p>{val?.message}</p>
                       )}
 
-                      <span className="timeText">{formatTime(val.timeStamp)}</span>
+                      <span className="timeText">
+                        {formatTime(val.timeStamp)}
+                      </span>
                     </div>
                     <button className="text-center text-sm text-red-400">
                       <i
@@ -379,8 +387,8 @@ const Chat = (toggleLists) => {
                 </>
               ))}
           </div>
-          <div className="bottom">
-            <div className="icons">
+          <div className="bottom ">
+            <div className="icons  ">
               <label htmlFor="file">
                 <img src="./img.png" alt="" />
               </label>
@@ -390,7 +398,6 @@ const Chat = (toggleLists) => {
                 style={{ display: "none" }}
                 onChange={handleAvatar}
               />
-              {/* <img src="./mic.png" alt="" /> */}
             </div>
             <input
               type="text"
@@ -400,7 +407,7 @@ const Chat = (toggleLists) => {
               onChange={(e) => setValue(e.target.value)}
             />
 
-            <div className="emoji">
+            <div className="emoji ">
               <img
                 src="./emoji.png"
                 alt=""

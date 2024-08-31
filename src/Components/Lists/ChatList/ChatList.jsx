@@ -211,6 +211,7 @@ const ChatList = ({toggleLists}) => {
       groupId: userData.userID,
       time: Date.now(),
       chats: [],
+      ID:userData.userID
     });
 
     console.log(session);
@@ -227,7 +228,7 @@ const ChatList = ({toggleLists}) => {
     try {
       const q = query(
         collection(db, "GroupsChats"),
-        where("groupName", "==", "Ahmed Group")
+        where("groupId", "==",userData.userID )
       );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const array = [];
@@ -306,6 +307,7 @@ const ChatList = ({toggleLists}) => {
                   onClick={() => {
                     handleGroupChannel(users);
                     dispatch(chatShow(true));
+                    toggleLists()
                   }}
                   className="item px-2 py-2"
                 >
@@ -368,7 +370,7 @@ const ChatList = ({toggleLists}) => {
           ))
         )}
         {addmode && (
-          <div className="addUser">
+          <div className="addUser mt-20">
             <form onSubmit={handleSearch}>
               <input
                 type="text"

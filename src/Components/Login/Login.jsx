@@ -169,7 +169,7 @@ const Login = () => {
               name="email"
               value={value.email}
               onChange={handleChange}
-              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md text-black outline-none"
             />
             <input
               type="password"
@@ -177,7 +177,7 @@ const Login = () => {
               name="password"
               value={value.password}
               onChange={handleChange}
-              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md text-black outline-none"
             />
             <button
               type="submit"
@@ -216,7 +216,7 @@ const Login = () => {
               placeholder="Enter Your name"
               value={value.name}
               onChange={handleChange}
-              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md text-black outline-none "
             />
             <input
               type="text"
@@ -224,7 +224,7 @@ const Login = () => {
               name="email"
               value={value.email}
               onChange={handleChange}
-              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md"
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2 border rounded-md text-black outline-none"
             />
             <input
               type="password"
@@ -232,7 +232,7 @@ const Login = () => {
               name="password"
               value={value.password}
               onChange={handleChange}
-              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2  border rounded-md"
+              className="w-full md:mb-3 md:p-3 px-3 py-2 mb-2  border rounded-md text-black outline-none"
             />
             <button
               onClick={newAccount}
