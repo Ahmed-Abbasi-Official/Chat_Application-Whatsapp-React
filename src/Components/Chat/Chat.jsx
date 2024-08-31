@@ -20,7 +20,7 @@ import {
 import { db } from "../../Conf/Firebase";
 import upload from "../../Conf/Upload";
 
-const Chat = () => {
+const Chat = (toggleLists) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [groupValue, setGroupValue] = useState("");

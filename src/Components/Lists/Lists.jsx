@@ -3,12 +3,12 @@ import React from 'react'
 import UserInfo from './UserInfo/UserInfo'
 import ChatList from './ChatList/ChatList'
 
-const Lists = () => {
+const Lists = ({toggleLists}) => {
   return (
     <>
     <div className='list'>
         <UserInfo />
-        <ChatList />
+        <div className='w-full '><ChatList toggleLists={toggleLists}  /></div>
     </div>
     </>
   )

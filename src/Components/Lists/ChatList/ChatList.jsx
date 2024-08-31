@@ -1,3 +1,6 @@
+
+
+
 import React, { useEffect, useState } from "react";
 import "./ChatList.css";
 import "./AddUser.css";
@@ -15,13 +18,12 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import appwriteAuth from "../../../Appwrite/Auth";
 import { db } from "../../../Conf/Firebase";
 import { arrayUnion } from "firebase/firestore";
 import { useSearchParams } from "react-router-dom";
 import upload from "../../../Conf/Upload";
 import { groupStatus, handleGroupChannle } from "../../../Store/AuthSlice";
-const ChatList = () => {
+const ChatList = ({toggleLists}) => {
   const [addmode, setMode] = useState(false);
   const [chats, setChats] = useState([]);
   const userData = useSelector((state) => state.authReducers.userData);
@@ -150,6 +152,7 @@ const ChatList = () => {
 
   const handleChannel = (user) => {
     dispatch(getChannel(user));
+    
 
     // Create a new URL object based on the current window location
     const url = new URL(window.location.href);
@@ -329,16 +332,20 @@ const ChatList = () => {
           chats.map((user) => (
             <>
               <div
+              
                 style={{
                   backgroundColor:
                     channel?.userID === user.userID
                       ? "rgba(17 , 25 , 40 , 0.4)"
                       : "",
+                      width:'100%',
+                      minWidth:"100%"
                 }}
-                className="item"
+                className="item    "
                 key={user.chatId}
                 onClick={() => {
                   handleChannel(user);
+                  toggleLists()
                 }}
               >
                 <img src={user?.url || ""} alt="" />
@@ -423,3 +430,4 @@ const ChatList = () => {
 };
 
 export default ChatList;
+
