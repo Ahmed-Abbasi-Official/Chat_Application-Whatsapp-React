@@ -373,6 +373,7 @@ const ChatList = ({toggleLists}) => {
           <div className="addUser mt-20">
             <form onSubmit={handleSearch}>
               <input
+              className="text-black"
                 type="text"
                 placeholder="Username"
                 name="Username"
@@ -384,19 +385,21 @@ const ChatList = ({toggleLists}) => {
               />
               <button type="submit">Search</button>
             </form>
-            {users && (
-              <>
-                <div className="user">
-                  <div className="details">
-                    <img src={users[0].url} alt="" />
-                    <span>{users[0].username}</span>
-                  </div>
-                  <button onClick={handleAdd}>Add User</button>
-                </div>
-              </>
-            )}
+            {users && users.length > 0 ? (
+  <>
+    <div className="user">
+      <div className="details">
+        <img src={users[0].url} alt="" />
+        <span>{users[0].username}</span>
+      </div>
+      <button onClick={handleAdd}>Add User</button>
+    </div>
+  </>
+) : (
+  <p className="mt-4">Please Enter correct Name</p>
+)}
           </div>
-        )}
+        ) }
         {createGroup && (
           <div className="addUser">
             <form onSubmit={handleCreateGroup}>
