@@ -19,19 +19,23 @@ import {
 } from "firebase/firestore";
 import { db } from "../../Conf/Firebase";
 import upload from "../../Conf/Upload";
+import { LineWave } from "react-loader-spinner"; // Import LineWave loader
 
 const Chat = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [groupValue, setGroupValue] = useState("");
+  const [hoveredMessageId, setHoveredMessageId] = useState(null);
+
   const [message, setMessage] = useState(null);
   const [groupMessages, setGroupMessages] = useState([]);
+  const [loading, setLoading] = useState(false); // State for loader
   const userData = useSelector((state) => state.authReducers.userData);
   const groupStatus = useSelector((state) => state.authReducers.groupStatus);
   const channel = useSelector((state) => state.authReducers.channel);
   const groupChannel = useSelector((state) => state.authReducers.groupChannel);
   const dispatch = useDispatch();
-  // console.log(groupChannel);
+
   const handleEmoji = (e) => {
     setValue((prev) => prev + e.emoji);
   };
@@ -41,7 +45,7 @@ const Chat = () => {
     getGroupMessages();
   }, [channel, userData.userID]);
 
-  const chatId = (currentId) => {
+  const chatId = () => {
     let id = "";
     if (userData.userID < channel.userID) {
       id = `${userData.userID}${channel.userID}`;
@@ -53,7 +57,7 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     // Add a new document with a generated id.
-    const docRef = await addDoc(collection(db, "messages"), {
+    await addDoc(collection(db, "messages"), {
       message: value,
       sentTime: new Date().toISOString(),
       sender: userData.userID,
@@ -62,7 +66,6 @@ const Chat = () => {
       chatId: chatId(),
     });
     setValue("");
-    console.log("Document written with ID: ", docRef.id);
   };
 
   const getAllMessages = async () => {
@@ -71,34 +74,37 @@ const Chat = () => {
       where("chatId", "==", chatId()),
       orderBy("timeStamp", "asc")
     );
-
+  
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const allMessages = [];
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         allMessages.push({
-          ...doc.data(),
+          ...data,
           messageID: doc.id,
           direction:
-            doc.data().sender === userData.userID ? "outgoing" : "incoming",
+            data.sender === userData.userID ? "outgoing" : "incoming",
+          timeStamp: data.timeStamp ? data.timeStamp.toDate() : new Date() // Ensure timeStamp is a JavaScript Date object
         });
       });
-
+  
       setMessage(allMessages);
-
+  
       if (allMessages.length > 0) {
         const lastMessage = allMessages[allMessages.length - 1];
-        console.log(lastMessage);
         dispatch(getLastMessage(lastMessage));
       }
     });
   };
+  
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";
-    const date = new Date(timestamp.seconds * 1000); // Convert Firestore timestamp to JavaScript Date object
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // Format the time as hh:mm
+    const date = new Date(timestamp * 1000); // Convert Firestore timestamp to JavaScript Date object
+    
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit",second: "2-digit", }); // Format the time as hh:mm
   };
-
+  
   const formatTimeGroup = (timestamp) => {
     if (!timestamp) return "";
     const date = new Date(timestamp); // Convert milliseconds to JavaScript Date object
@@ -108,24 +114,25 @@ const Chat = () => {
       second: "2-digit",
     }); // Format the time as hh:mm:ss
   };
-
-  const handleDeleteMessage = (id) => {
-    message &&
-      message.map(async (val) =>
-        val.messageID === id ? await deleteDoc(doc(db, "messages", id)) : ""
-      );
+  
+  
+  
+  const handleDeleteMessage = async (id) => {
+    await deleteDoc(doc(db, "messages", id));
   };
 
   const handleAvatar = async (e) => {
+    setLoading(true); // Start loader
     const file = e.target.files[0];
     const session = await upload(file);
     if (session) {
       if (groupStatus) {
-        return setGroupValue(session);
+        setGroupValue(session);
       } else {
-        return setValue(session);
+        setValue(session);
       }
     }
+    setLoading(false); // Stop loader
   };
 
   const handleGroupMessage = async () => {
@@ -138,12 +145,8 @@ const Chat = () => {
 
       if (!querySnapshot.empty) {
         const groupChatDoc = querySnapshot.docs[0];
-        console.log(groupChatDoc.data());
+        const groupChatDocRef = doc(db, "GroupsChats", groupChatDoc.id);
 
-        const groupChatDocRef = doc(db, "GroupsChats", groupChatDoc.id); // Extracting the document ID
-        console.log(groupChatDocRef);
-
-        // Assuming newMessage is the new message you want to add to the chats array
         await updateDoc(groupChatDocRef, {
           chats: arrayUnion({
             messages: groupValue,
@@ -153,8 +156,6 @@ const Chat = () => {
             time: Date.now(),
           }),
         });
-
-        console.log("Message added successfully!");
       } else {
         console.log("No group chat found with the specified groupId.");
       }
@@ -177,9 +178,8 @@ const Chat = () => {
             direction:
               val.senderId === userData.userID ? "outgoing" : "incoming",
             groupMessagesId: querySnapshot.docs[0].id,
+            time: val.time ? new Date(val.time) : new Date() // Ensure time is a JavaScript Date object
           }));
-          console.log(newArray[0].messages);
-
           setGroupMessages(newArray);
         }
       });
@@ -188,9 +188,10 @@ const Chat = () => {
       console.error("Error getting group messages:", error);
     }
   };
-  console.log(groupMessages);
+  
 
-  // console.log(groupStatus);
+  const isSendButtonDisabled = groupStatus ? !groupValue.trim() : !value.trim();
+
   return (
     <>
       {groupStatus ? (
@@ -200,103 +201,49 @@ const Chat = () => {
               <img src={groupChannel.groupDp} alt="" />
               <div className="texts">
                 <span>{groupChannel.groupName}</span>
-                {/* <p>Lorem ipsum dolor sit amet.</p> */}
               </div>
             </div>
             <div className="icons">
-              {/* <img src="./phone.png" alt="" />
-          <img src="./video.png" alt="" /> */}
               <img src="./info.png" alt="" />
             </div>
           </div>
           <div className="center">
-            {groupStatus
-              ? groupMessages &&
-                groupMessages.map((val) => (
-                  <>
-                    <div
-                      className={`${
-                        val.direction === "outgoing"
-                          ? "message own "
-                          : "message "
-                      }`}
-                      key={val?.groupId}
-                    >
-                      <div className="texts">
-                        <p className="flex flex-col">
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="avatar-container">
-                              <img
-                                src={val.senderImg}
-                                alt=""
-                                className="avatar-image"
-                              />
-                            </span>
-                            <span className="text-sm ml-2">
-                              {val?.senderName}
-                            </span>{" "}
-                            {/* Added margin-left for spacing */}
-                          </div>
-
-                          
-                          {val?.messages.match(
-                          /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
-                        ) ? (
-                          <img src={val?.messages} alt="" />
-                        ) : (
-                          <p>{val?.messages}</p>
-                        )}
-                          
-                        </p>
-
-                        <span className="timeText">
-                          {formatTimeGroup(val.time)}
-                        </span>
-                      </div>
-                      {/* <button className="text-center text-sm text-red-400">
-                        <i
-                          class="fa-solid fa-trash"
-                          onClick={() => {
-                            handleDeleteMessage(val.messageID);
-                          }}
-                        ></i>
-                      </button> */}
+            {groupMessages &&
+              groupMessages.map((val) => (
+                <div
+                  className={`${
+                    val.direction === "outgoing" ? "message own" : "message"
+                  }`}
+                  key={val.groupMessagesId}
+                  onMouseEnter={() => setHoveredMessageId(val.groupMessagesId)}
+                  onMouseLeave={() => setHoveredMessageId(null)}
+                >
+                  <div className="texts">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="avatar-container">
+                        <img src={val.senderImg} alt="" className="avatar-image" />
+                      </span>
+                      <span className="text-sm ml-2">{val.senderName}</span>
                     </div>
-                  </>
-                ))
-              : message &&
-                message.map((val) => (
-                  <>
-                    <div
-                      className={`${
-                        val.direction === "outgoing" ? "message own" : "message"
-                      }`}
-                      key={val.messageID}
-                    >
-                      <div className="texts">
-                        {val?.message.match(
-                          /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
-                        ) ? (
-                          <img src={val?.message} alt="" />
-                        ) : (
-                          <p>{val?.message}</p>
-                        )}
-
-                        <span className="timeText">
-                          {formatTime(val.timeStamp)}
-                        </span>
-                      </div>
+                    {val.messages.match(
+                      /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
+                    ) ? (
+                      <img src={val.messages} alt="" />
+                    ) : (
+                      <p>{val.messages}</p>
+                    )}
+                    <div className="timeText">
+                      <span>{formatTimeGroup(val.time)}</span>
+                      <button
+                        className="delete-icon text-center text-red-400"
+                        onClick={() => handleDeleteMessage(val.groupMessagesId)}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
                     </div>
-                  </>
-                ))}
-                      {/* <button className="text-center text-4xl">
-                        <i
-                          class="fa-solid fa-trash"
-                          onClick={() => {
-                            handleDeleteMessage(val.messageID);
-                          }}
-                        ></i>
-                      </button> */}
+                  </div>
+                </div>
+              ))}
           </div>
           <div className="bottom">
             <div className="icons">
@@ -309,7 +256,6 @@ const Chat = () => {
                 style={{ display: "none" }}
                 onChange={handleAvatar}
               />
-              {/* <img src="./mic.png" alt="" /> */}
             </div>
             <input
               type="text"
@@ -318,7 +264,6 @@ const Chat = () => {
               value={groupValue}
               onChange={(e) => setGroupValue(e.target.value)}
             />
-
             <div className="emoji">
               <img
                 src="./emoji.png"
@@ -330,12 +275,9 @@ const Chat = () => {
               </div>
             </div>
             <button
-              className="sendButton"
-              onClick={() => {
-                setOpen(false);
-                handleGroupMessage();
-                getGroupMessages();
-              }}
+              className="send"
+              onClick={handleGroupMessage}
+              disabled={isSendButtonDisabled}
             >
               Send
             </button>
@@ -348,47 +290,59 @@ const Chat = () => {
               <img src={channel.url} alt="" />
               <div className="texts">
                 <span>{channel.username}</span>
-                {/* <p>Lorem ipsum dolor sit amet.</p> */}
               </div>
+            </div>
+            <div className="icons">
+              <img src="./info.png" alt="" />
             </div>
           </div>
           <div className="center">
             {message &&
               message.map((val) => (
-                <>
-                  <div
-                    className={`${
-                      val.direction === "outgoing" ? "message own" : "message"
-                    }`}
-                    key={val.messageID}
-                  >
-                    <div className="texts">
-                      {val?.message.match(
-                        /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
-                      ) ? (
-                        <img src={val?.message} alt="" />
-                      ) : (
-                        <p>{val?.message}</p>
-                      )}
-
-                      <span className="timeText">
-                        {formatTime(val.timeStamp)}
-                    <button className="text-center text-[9px] text-red-400 mx-14">
-                      <i
-                        class="fa-solid fa-trash"
-                        onClick={() => {
-                          handleDeleteMessage(val.messageID);
-                        }}
-                      ></i>
-                    </button>
-                      </span>
+                <div
+                  className={`${
+                    val.direction === "outgoing" ? "message own" : "message"
+                  }`}
+                  key={val.messageID}
+                  onMouseEnter={() => setHoveredMessageId(val.messageID)}
+                  onMouseLeave={() => setHoveredMessageId(null)}
+                >
+                  {loading && (
+                    <div className="loader-container">
+                      <LineWave
+                        height="300"
+                        width="300"
+                        color="#4fa94d"
+                        ariaLabel="line-wave"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                        visible={true}
+                      />
+                    </div>
+                  )}
+                  <div className="texts">
+                    {val.message.match(
+                      /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|bmp|webp))/i
+                    ) ? (
+                      <img src={val.message} alt="" />
+                    ) : (
+                      <p>{val.message}</p>
+                    )}
+                    <div className="timeText">
+                      <span>{formatTime(val.timeStamp)}</span>
+                      <button
+                        className="delete-icon text-center text-red-400"
+                        onClick={() => handleDeleteMessage(val.messageID)}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
                     </div>
                   </div>
-                </>
+                </div>
               ))}
           </div>
-          <div className="bottom ">
-            <div className="icons  ">
+          <div className="bottom">
+            <div className="icons">
               <label htmlFor="file">
                 <img src="./img.png" alt="" />
               </label>
@@ -406,8 +360,7 @@ const Chat = () => {
               value={value}
               onChange={(e) => setValue(e.target.value)}
             />
-
-            <div className="emoji ">
+            <div className="emoji">
               <img
                 src="./emoji.png"
                 alt=""
@@ -418,11 +371,9 @@ const Chat = () => {
               </div>
             </div>
             <button
-              className="sendButton"
-              onClick={() => {
-                setOpen(false);
-                handleSendMessage();
-              }}
+              className="send"
+              onClick={handleSendMessage}
+              disabled={isSendButtonDisabled}
             >
               Send
             </button>
@@ -431,6 +382,8 @@ const Chat = () => {
       )}
     </>
   );
+  
+  
 };
 
 export default Chat;

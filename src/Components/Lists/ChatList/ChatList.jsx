@@ -39,6 +39,55 @@ const ChatList = ({ toggleLists }) => {
 
   // const chatId = searchParams.get('chatId');
 
+  const handleAdd = async () => {
+    try {
+      const chatId = ChatID();
+      const newChat = {
+        chatId: chatId,
+        lastMessage: "",
+        senderId: userData.userID,
+        reciverId: users[0].userID,
+        timestamp: Date.now(),
+      };
+  
+      const userDataChatRef = doc(db, "usersChats", userData.userID);
+      const userChatRef = doc(db, "usersChats", users[0].userID);
+  
+      await updateDoc(userDataChatRef, {
+        chats: arrayUnion(newChat),
+      });
+  
+      await updateDoc(userChatRef, {
+        chats: arrayUnion({
+          ...newChat,
+          senderId: users[0].userID,
+          reciverId: userData.userID,
+        }),
+      });
+  
+      // Check if the user is already in the chats
+      setChats((prevChats) => {
+        const userExists = prevChats.some(chat => chat.userID === users[0].userID);
+        if (userExists) {
+          return prevChats;
+        }
+        return [
+          ...prevChats,
+          {
+            ...users[0],
+            chatId: chatId,
+          },
+        ];
+      });
+  
+      console.log("User added to chat list");
+    } catch (error) {
+      console.log("Error adding user:", error);
+    }
+  };
+  
+  
+
   useEffect(() => {
     let unsubscribe;
 
@@ -118,33 +167,7 @@ const ChatList = ({ toggleLists }) => {
     return id;
   };
 
-  const handleAdd = async () => {
-    console.log(ChatID());
-
-    const userDataChatRef = doc(db, "usersChats", userData.userID);
-    const userChatRef = doc(db, "usersChats", users[0].userID);
-
-    const res = await updateDoc(userDataChatRef, {
-      chats: arrayUnion({
-        chatId: ChatID(),
-        lastMessage: lastMessage?.message,
-        senderId: userData.userID,
-        reciverId: users[0].userID,
-        timestamp: Date.now(),
-      }),
-    });
-
-    const res2 = await updateDoc(userChatRef, {
-      chats: arrayUnion({
-        chatId: ChatID(),
-        lastMessage: lastMessage?.message,
-        senderId: users[0].userID,
-        reciverId: userData.userID,
-        timestamp: Date.now(),
-      }),
-    });
-    console.log("result>---", res, res2);
-  };
+ 
 
   const handleChannel = (user) => {
     dispatch(getChannel(user));
@@ -373,37 +396,38 @@ const ChatList = ({ toggleLists }) => {
             </>
           ))
         )}
-        {addmode && (
-          <div className="addUser mt-20">
-            <form onSubmit={handleSearch}>
-              <input
-                className="text-black"
-                type="text"
-                placeholder="Username"
-                name="Username"
-                value={value}
-                onChange={(e) => {
-                  setValue(e.target.value);
-                }}
-                required
-              />
-              <button type="submit">Search</button>
-            </form>
-            {users && users.length > 0 ? (
-              <>
-                <div className="user">
-                  <div className="details">
-                    <img src={users[0].url} alt="" />
-                    <span>{users[0].username}</span>
-                  </div>
-                  <button onClick={handleAdd}>Add User</button>
-                </div>
-              </>
-            ) : (
-              <p className="mt-4">Please Enter correct Name</p>
-            )}
+     {addmode && (
+  <div className={` my-auto w-full z-20`}>
+    <form onSubmit={handleSearch}>
+      <input
+        className="text-black outline-none rounded"
+        type="text"
+        placeholder="Username"
+        name="Username"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+        }}
+        required
+      />
+      <button type="submit" className="mt-2 bg-[#1f8ef1] px-2 py-2 rounded text-sm ">Search</button>
+    </form>
+    {users && users.length > 0 ? (
+      <>
+        <div className="user">
+          <div className="details flex items-center gap-2">
+            <img src={users[0].url} alt="" className="w-[50px] h-[50px] rounded-full" />
+            <span>{users[0].username}</span>
           </div>
-        )}
+          <button onClick={handleAdd} className="mt-2 bg-[#1f8ef1] px-2 py-2 rounded text-sm " >Add User</button>
+        </div>
+      </>
+    ) : (
+      <p className="mt-4">Please Enter correct Name</p>
+    )}
+  </div>
+)}
+
         {createGroup && (
           <div className="addUser">
             <form onSubmit={handleCreateGroup}>
@@ -439,3 +463,5 @@ const ChatList = ({ toggleLists }) => {
 };
 
 export default ChatList;
+
+

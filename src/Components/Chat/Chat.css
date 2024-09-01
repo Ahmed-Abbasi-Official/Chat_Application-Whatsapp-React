@@ -290,3 +290,41 @@
     }
   }
 }
+
+.loader-container {
+  position: fixed; /* or absolute if needed */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; /* Ensure it's above other elements */
+}
+.message {
+  position: relative;
+  padding: 10px;
+}
+
+.delete-icon {
+  position: absolute;
+  right: 10px; /* Align the icon close to the right edge of the message */
+  bottom: 10px; /* Align the icon near the bottom of the message, next to the time */
+  opacity: 0; /* Initially hidden */
+  font-size: 1.2rem; /* Increase the size of the icon for better visibility */
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease; /* Smooth transition for opacity and transform */
+}
+
+.message:hover .delete-icon {
+  opacity: 1; /* Show the icon */
+  transform: translateY(-10px); /* Move the icon up a bit from its default position */
+}
+
+.timeText {
+  display: flex;
+  align-items: center; /* Align items vertically */
+  gap: 10px; /* Space between time and icon */
+}
