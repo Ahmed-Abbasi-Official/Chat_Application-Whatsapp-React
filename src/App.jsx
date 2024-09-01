@@ -74,7 +74,7 @@ const App = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="container">
+        <div className="container   ">
           {status ? (
             <>
               <div className="md:hidden">
@@ -87,10 +87,11 @@ const App = () => {
              
                 {showLists && <Lists toggleLists={toggleLists} />}
               </div>
-              <div className="hidden md:block ">
+              
+              <div className="hidden md:block  ">
                 <Lists />
               </div>
-              {channelStatus ? <Chat toggleLists={toggleLists} /> : null}
+              <div className="w-[80%] ">{channelStatus ? <Chat toggleLists={toggleLists}  /> : null}</div>
             </>
           ) : (
             <Login />

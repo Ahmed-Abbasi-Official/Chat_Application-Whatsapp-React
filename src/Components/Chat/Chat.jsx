@@ -286,17 +286,17 @@ const Chat = () => {
                           {formatTime(val.timeStamp)}
                         </span>
                       </div>
-                      <button className="text-center text-sm text-red-400">
+                    </div>
+                  </>
+                ))}
+                      {/* <button className="text-center text-4xl">
                         <i
                           class="fa-solid fa-trash"
                           onClick={() => {
                             handleDeleteMessage(val.messageID);
                           }}
                         ></i>
-                      </button>
-                    </div>
-                  </>
-                ))}
+                      </button> */}
           </div>
           <div className="bottom">
             <div className="icons">
@@ -373,9 +373,7 @@ const Chat = () => {
 
                       <span className="timeText">
                         {formatTime(val.timeStamp)}
-                      </span>
-                    </div>
-                    <button className="text-center text-sm text-red-400">
+                    <button className="text-center text-[9px] text-red-400 mx-14">
                       <i
                         class="fa-solid fa-trash"
                         onClick={() => {
@@ -383,6 +381,8 @@ const Chat = () => {
                         }}
                       ></i>
                     </button>
+                      </span>
+                    </div>
                   </div>
                 </>
               ))}

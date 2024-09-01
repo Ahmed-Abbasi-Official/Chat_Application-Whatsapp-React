@@ -7,7 +7,7 @@ const Lists = ({toggleLists}) => {
   return (
     <>
     <div className='list'>
-        <UserInfo />
+        <div className=' '><UserInfo /></div>
         <div className='w-full '><ChatList toggleLists={toggleLists}  /></div>
     </div>
     </>

@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from "react";
 import "./ChatList.css";
 import "./AddUser.css";
@@ -23,7 +20,7 @@ import { arrayUnion } from "firebase/firestore";
 import { useSearchParams } from "react-router-dom";
 import upload from "../../../Conf/Upload";
 import { groupStatus, handleGroupChannle } from "../../../Store/AuthSlice";
-const ChatList = ({toggleLists}) => {
+const ChatList = ({ toggleLists }) => {
   const [addmode, setMode] = useState(false);
   const [chats, setChats] = useState([]);
   const userData = useSelector((state) => state.authReducers.userData);
@@ -39,7 +36,6 @@ const ChatList = ({toggleLists}) => {
   const channel = useSelector((state) => state.authReducers.channel);
   const lastMessage = useSelector((state) => state.authReducers.lastMessage);
   // console.log(lastMessage);
-  
 
   // const chatId = searchParams.get('chatId');
 
@@ -131,7 +127,7 @@ const ChatList = ({toggleLists}) => {
     const res = await updateDoc(userDataChatRef, {
       chats: arrayUnion({
         chatId: ChatID(),
-        lastMessage: "",
+        lastMessage: lastMessage?.message,
         senderId: userData.userID,
         reciverId: users[0].userID,
         timestamp: Date.now(),
@@ -141,7 +137,7 @@ const ChatList = ({toggleLists}) => {
     const res2 = await updateDoc(userChatRef, {
       chats: arrayUnion({
         chatId: ChatID(),
-        lastMessage: "",
+        lastMessage: lastMessage?.message,
         senderId: users[0].userID,
         reciverId: userData.userID,
         timestamp: Date.now(),
@@ -152,7 +148,6 @@ const ChatList = ({toggleLists}) => {
 
   const handleChannel = (user) => {
     dispatch(getChannel(user));
-    
 
     // Create a new URL object based on the current window location
     const url = new URL(window.location.href);
@@ -211,13 +206,12 @@ const ChatList = ({toggleLists}) => {
       groupId: userData.userID,
       time: Date.now(),
       chats: [],
-      ID:userData.userID
+      ID: userData.userID,
     });
 
     console.log(session);
     setCreateGroup(false);
   };
-  
 
   const handleGroupChannel = (group) => {
     dispatch(groupStatus(true));
@@ -228,7 +222,7 @@ const ChatList = ({toggleLists}) => {
     try {
       const q = query(
         collection(db, "GroupsChats"),
-        where("groupId", "==",userData.userID )
+        where("groupId", "==", userData.userID)
       );
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const array = [];
@@ -244,7 +238,6 @@ const ChatList = ({toggleLists}) => {
     setCreateGroup(false);
     console.log(avatar);
   };
-  
 
   return (
     <>
@@ -258,7 +251,7 @@ const ChatList = ({toggleLists}) => {
               setGroup(false);
             }}
           >
-            Add User
+            User
           </p>
           <img
             src={addmode ? "./minus.png" : "./plus.png"}
@@ -307,7 +300,7 @@ const ChatList = ({toggleLists}) => {
                   onClick={() => {
                     handleGroupChannel(users);
                     dispatch(chatShow(true));
-                    toggleLists()
+                    toggleLists();
                   }}
                   className="item px-2 py-2"
                 >
@@ -334,48 +327,48 @@ const ChatList = ({toggleLists}) => {
           chats.map((user) => (
             <>
               <div
-              
                 style={{
                   backgroundColor:
                     channel?.userID === user.userID
                       ? "rgba(17 , 25 , 40 , 0.4)"
                       : "",
-                      width:'100%',
-                      minWidth:"100%"
+                  width: "100%",
+                  minWidth: "100%",
                 }}
                 className="item    "
                 key={user.chatId}
                 onClick={() => {
                   handleChannel(user);
-                  toggleLists()
+                  toggleLists();
                 }}
               >
                 <img src={user?.url || ""} alt="" />
                 <div className="texts">
                   <div className="userName">
-                    <span>{user?.username || "Unknown User"}</span>{" "}
+                    <span className="text-[11px]  flex items-center">{user?.username || "Unknown User"}</span>{" "}
+                    <button className="text-center text-sm text-red-400">
+                      <i
+                        class="fa-solid fa-trash"
+                        onClick={() => {
+                          handleDelete(user);
+                        }}
+                      ></i>
+                    </button>
                   </div>
-                  <p>
-  {lastMessage?.message.match(/https?/i) ? (
-    lastMessage?.message.match(/\.(png|jpg|jpeg|gif|bmp|webp)$/i) ? (
-      <p>There is an Image</p>
-    ) : (
-      <p>There is a link</p>
-    )
-  ) : (
-    <p>{lastMessage?.message}</p>
-  )}
-</p>
-
+                  {/* <p>
+                    {lastMessage?.message.match(/https?/i) ? (
+                      lastMessage?.message.match(
+                        /\.(png|jpg|jpeg|gif|bmp|webp)$/i
+                      ) ? (
+                        <p>There is an Image</p>
+                      ) : (
+                        <p>There is a link</p>
+                      )
+                    ) : (
+                      <p>{lastMessage?.message}</p>
+                    )}
+                  </p> */}
                 </div>
-                <button className="text-center text-sm text-red-400">
-                  <i
-                    class="fa-solid fa-trash"
-                    onClick={() => {
-                      handleDelete(user);
-                    }}
-                  ></i>
-                </button>
               </div>
             </>
           ))
@@ -384,7 +377,7 @@ const ChatList = ({toggleLists}) => {
           <div className="addUser mt-20">
             <form onSubmit={handleSearch}>
               <input
-              className="text-black"
+                className="text-black"
                 type="text"
                 placeholder="Username"
                 name="Username"
@@ -397,20 +390,20 @@ const ChatList = ({toggleLists}) => {
               <button type="submit">Search</button>
             </form>
             {users && users.length > 0 ? (
-  <>
-    <div className="user">
-      <div className="details">
-        <img src={users[0].url} alt="" />
-        <span>{users[0].username}</span>
-      </div>
-      <button onClick={handleAdd}>Add User</button>
-    </div>
-  </>
-) : (
-  <p className="mt-4">Please Enter correct Name</p>
-)}
+              <>
+                <div className="user">
+                  <div className="details">
+                    <img src={users[0].url} alt="" />
+                    <span>{users[0].username}</span>
+                  </div>
+                  <button onClick={handleAdd}>Add User</button>
+                </div>
+              </>
+            ) : (
+              <p className="mt-4">Please Enter correct Name</p>
+            )}
           </div>
-        ) }
+        )}
         {createGroup && (
           <div className="addUser">
             <form onSubmit={handleCreateGroup}>
@@ -446,4 +439,3 @@ const ChatList = ({toggleLists}) => {
 };
 
 export default ChatList;
-

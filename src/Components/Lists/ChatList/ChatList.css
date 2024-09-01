@@ -34,10 +34,10 @@
       }
   
       .add {
-        width: 36px;
-        height: 36px;
+        width: 26px;
+        height: 26px;
         background-color: rgba(17, 25, 40, 0.5);
-        padding: 10px;
+        padding: 5px;
         border-radius: 10px;
         cursor: pointer;
       }
@@ -62,13 +62,11 @@
   
     .texts {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      gap: 5px;
   
       .userName {
         font-weight: 500;
         display: flex;
-        gap: 60px;
   
         button {
           padding: 1px 9px;
